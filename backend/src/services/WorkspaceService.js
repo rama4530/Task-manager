@@ -3,9 +3,11 @@ const AppError = require('../utils/AppError');
 
 const canModifyWorkspace = async (workspace_id,currentUser) => {
     const isGlobalAdmin = currentUser.role === 'admin';
+    const workspace = await workspaceRepository.findById(workspace_id);
+    const isOwner = workspace.owner_id === currentUser.id;
     const memberShip = await workspaceRepository.findMember(workspace_id, currentUser.id);
     const isWorkspaceAdmin = memberShip?.role === 'admin';
-    return isGlobalAdmin || isWorkspaceAdmin;
+    return isGlobalAdmin || isWorkspaceAdmin || isOwner;
 }
 class WorkspaceService {
 
@@ -26,7 +28,7 @@ class WorkspaceService {
         if(!workspace) {
             throw new AppError('Failed to find the workspace record', 404);
         }
-        if(!await canModifyWorkspace(workspace_id, currentUser)){
+        if(!await canModifyWorkspace(id, currentUser)){
             throw new AppError('You are not allowed to update the user role', 403);
         }
         return workspaceRepository.update(id, fields);
@@ -42,6 +44,11 @@ class WorkspaceService {
     }
 
     async addMemberToWorkspace(workspace_id, user_id, role, currentUser){
+        const workspace = await workspaceRepository.findById(workspace_id);
+        const isMember = workspace.owner_id === currentUser.id;
+        if(!isMember) {
+            throw new AppError('Do not have access to add the member to the workspace', 403);
+        }
         return workspaceRepository.addMember(workspace_id, user_id, role);
     }
 
