@@ -9,14 +9,12 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD
 })
 
-pool.connect((err, client, release) => {
-    if(err){
-        console.error('X Database connection failed:', err.message)
-    } else {
-        console.log(' Database connected successfully');
-        release();
-    }
+pool.query('SELECT 1')
+.then(() => {
+    console.log('✅ Database connected')
+}).catch(err =>{
+    console.error('❌ Database connection failed:', err.message);
+    process.exit(1);
 })
-
 
 module.exports = pool;

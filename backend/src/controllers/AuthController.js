@@ -1,4 +1,5 @@
 const authService = require('../services/AuthService')
+const AppError = require('../utils/AppError');
 class AuthController {
 
     async register(req, res, next) {
@@ -6,10 +7,9 @@ class AuthController {
             const { name, email, password } = req.body;
 
             if (!name || !email || !password) {
-                const error = new Error('Name, email and password are required');
-                error.status = 400;
-                throw error
+                throw new AppError('Name, email and password are required', 400);
             }
+
             const result = await authService.register({ name, email, password });
             res.status(201).json({
                 message: 'User register successfully',
@@ -24,12 +24,10 @@ class AuthController {
     async login(req, res, next) {
         try {
             const { email, password } = req.body;
-
             if (!email || !password) {
-                const error = new Error('Email and password are required');
-                error.status = 400;
-                throw error;
+                throw new AppError('Email and password are required', 400);
             }
+
             const result = await authService.login({ email, password });
             res.status(200).json({
                 message: 'Login succesful',

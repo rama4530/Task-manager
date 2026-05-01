@@ -4,6 +4,8 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 const authRoutes = require('./routes/AuthRoutes');
+const taskRoutes = require('./routes/taskRoutes');
+
 
 
 const app = express();
@@ -13,21 +15,35 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-app.get('/heath', (req, res)=>{
+// Health check
+app.get('/health', (req, res) => {
     res.status(200).json({
         status: 'ok',
         message: 'server is running',
         timestamp: new Date().toISOString()
-    })
-})
+    });
+});
 
-app.use('/api/v1/auth', authRoutes)
+// Routes
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/tasks', taskRoutes);
 
+// 404 handler
+app.use((req, res, next) => {
+    res.status(404).json({
+        success: false,
+        message: 'Route not found'
+    });
+});
+
+// Global error handler
 app.use((err, req, res, next) => {
-    console.error('X Error:', err.message);
+    console.error(err);
+
     res.status(err.status || 500).json({
-        error: err.message || 'Internal server error'
-    })
-})
+        success: false,
+        message: err.message || 'Internal server error'
+    });
+});
 
 module.exports = app;

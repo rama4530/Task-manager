@@ -5,7 +5,7 @@ require('dotenv').config();
 const authMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
-        if(!authHeader || !authHeader.startsWith('Bearer')){
+        if(!authHeader || !authHeader.startsWith('Bearer ')){
             const error = new Error('No Token provided');
             error.status = 401;
             throw error;
@@ -29,7 +29,7 @@ const authMiddleware = async (req, res, next) => {
         if(err.name === 'JsonWebTokenError') {
             err.message = 'Invalid Token'
             err.status = 401;
-        } else if(err.name === 'TokenExiredError'){
+        } else if(err.name === 'TokenExpiredError'){
             err.message = 'Token expired - please login again'
             err.status = 401;
         }
