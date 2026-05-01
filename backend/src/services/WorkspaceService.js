@@ -24,10 +24,6 @@ class WorkspaceService {
     }
 
     async updateWorkspace(id, fields, currentUser){
-        const workspace = await workspaceRepository.findById(id);
-        if(!workspace) {
-            throw new AppError('Failed to find the workspace record', 404);
-        }
         if(!await canModifyWorkspace(id, currentUser)){
             throw new AppError('You are not allowed to update the user role', 403);
         }
@@ -44,7 +40,7 @@ class WorkspaceService {
     }
 
     async addMemberToWorkspace(workspace_id, user_id, role, currentUser){
-        const workspace = await workspaceRepository.findById(workspace_id);
+        const workspace = await workspaceRepository.findMember(workspace_id, user_id);
         const isMember = workspace.owner_id === currentUser.id;
         if(!isMember) {
             throw new AppError('Do not have access to add the member to the workspace', 403);

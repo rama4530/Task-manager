@@ -22,7 +22,8 @@ class WorkspaceController {
             const {id} = req.params;
             const result = await workspaceService.findWorkspaceById(id);
             res.status(200).json({
-                message: `Found the workspace record with ID. Here are the details of workspace ${result}`
+                message: `Workspace found`,
+                result: result
             })
         }catch(error){
             next(error);
@@ -61,8 +62,9 @@ class WorkspaceController {
             if(!req.body || Object.keys(req.body).length === 0){
                 throw new AppError('Request body is required', 400);
             }
-            const {workspace_id, user_id} = req.params;
-            const result = await workspaceService.addMemberToWorkspace(workspace_id, user_id, req.body , req.user);
+            const {id} = req.params;
+            const {user_id, role} = req.body;
+            const result = await workspaceService.addMemberToWorkspace(id, user_id, role, req.user);
             res.status(200).json({
                 message: 'Sucessfully added the user to the workspace',
                 result: result
@@ -77,8 +79,8 @@ class WorkspaceController {
             if(!req.body || Object.keys(req.body).length === 0){
                 throw new AppError('Request body is required', 400);
             }
-            const {workspace_id, user_id} = req.params;
-            const result = await workspaceService.removeMemberFromWorkspace(workspace_id, user_id, req.user);
+            const {id, userId} = req.params;
+            const result = await workspaceService.removeMemberFromWorkspace(id, userId, req.user);
             res.status(200).json({
                 message: 'Successfully removed the user from the workspace',
                 MemberInfo: result
@@ -93,8 +95,9 @@ class WorkspaceController {
             if(!req.body || Object.keys(req.body).length === 0){
                 throw new AppError('Request body is required', 400);
             }
-            const {workspace_id, user_id } = req.params;
-            const result = await workspaceService.updateUserRole(workspace_id, user_id, req.body, req.user);
+            const {id, userId } = req.params;
+            const {role} = req.body;
+            const result = await workspaceService.updateUserRole(id, userId, role, req.user);
             res.status(200).json({
                 message: 'Sucessfully updated the user role in workspace',
                 result: result
