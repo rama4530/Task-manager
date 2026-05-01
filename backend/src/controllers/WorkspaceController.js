@@ -76,9 +76,6 @@ class WorkspaceController {
 
     async removeMemberFromWorkspace(req, res, next) {
         try{
-            if(!req.body || Object.keys(req.body).length === 0){
-                throw new AppError('Request body is required', 400);
-            }
             const {id, userId} = req.params;
             const result = await workspaceService.removeMemberFromWorkspace(id, userId, req.user);
             res.status(200).json({

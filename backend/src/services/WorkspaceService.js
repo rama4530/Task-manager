@@ -40,8 +40,7 @@ class WorkspaceService {
     }
 
     async addMemberToWorkspace(workspace_id, user_id, role, currentUser){
-        const workspace = await workspaceRepository.findMember(workspace_id, user_id);
-        const isMember = workspace.owner_id === currentUser.id;
+        const isMember = await workspaceRepository.findMember(workspace_id, user_id);
         if(!isMember) {
             throw new AppError('Do not have access to add the member to the workspace', 403);
         }
