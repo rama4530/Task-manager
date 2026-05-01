@@ -47,7 +47,7 @@ class WorkspaceController {
     async deleteWorkspace(req, res, next){
         try{
             const {id} = req.params;
-            const result = await workspaceService.deleteWorkspace(id, req.user);
+            const result = await workspaceService.deleteWorkspace(id, req.user, req.workspace);
             res.status(200).json({
                 message: `Successfully deleted the workspace.`
             })

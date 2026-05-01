@@ -26,51 +26,40 @@ class WorkspaceService {
         if(!workspace) {
             throw new AppError('Failed to find the workspace record', 404);
         }
-        if(!await canModifyWorkspace(workspace_id, user_id, currentUser)){
+        if(!await canModifyWorkspace(workspace_id, currentUser)){
             throw new AppError('You are not allowed to update the user role', 403);
         }
         return workspaceRepository.update(id, fields);
     }
 
-    async deleteWorkspace(id, currentUser){
-        const workspace = await workspaceRepository.findById(id);
-        if(!workspace) {
-            throw new AppError('Failed to find the workspace record', 404);
-        }
-        if(!await canModifyWorkspace(workspace_id, user_id, currentUser)){
-            throw new AppError('You are not allowed to delete the workspace', 403);
+    async deleteWorkspace(id, currentUser, workspace){
+        const isOwner = workspace.owner_id === currentUser.id;
+        const isGlobalAdmin = currentUser.role === 'admin';
+        if(!isOwner && !isGlobalAdmin){
+            throw new AppError('You are not allowed to remove member from the workspace', 403);
         }
         return workspaceRepository.delete(id);
     }
 
     async addMemberToWorkspace(workspace_id, user_id, role, currentUser){
-        // Here we are checking if he is part of the workspace
-        const member = await workspaceRepository.findMember(workspace_id, currentUser.id)
-        if(!member){
-            throw new AppError('You are not allowed to add member to the workspace', 403);
-        }
         return workspaceRepository.addMember(workspace_id, user_id, role);
     }
 
     async removeMemberFromWorkspace(workspace_id, user_id, currentUser){
-        if(!await canModifyWorkspace(workspace_id, user_id, currentUser)){
+        if(!await canModifyWorkspace(workspace_id, currentUser)){
             throw new AppError('You are not allowed to remove member from the workspace', 403);
         }
         return workspaceRepository.removeMember(workspace_id, user_id);
     }
 
     async updateUserRole(workspace_id, user_id, role, currentUser){
-        if(!await canModifyWorkspace(workspace_id, user_id, currentUser)){
+        if(!await canModifyWorkspace(workspace_id, currentUser)){
             throw new AppError('You are not allowed to update the user role', 403);
         }
         return workspaceRepository.updateMemberRole(workspace_id, user_id, role);
     }
 
     async getAllUsersFromWorkspace(workspace_id){
-        const workspace = await workspaceRepository.findById(id);
-        if(!workspace) {
-            throw new AppError('Failed to find the workspace record', 404);
-        }
         return workspaceRepository.getAllMembers(workspace_id);
     }
 }
