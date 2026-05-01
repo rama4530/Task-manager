@@ -15,7 +15,8 @@ class WorkspaceRepository {
 
     async findById(id){
         const result = await pool.query(
-            'SELECT name,owner_id FROM workspaces WHERE id = $1',[id]
+            `SELECT name,owner_id FROM workspaces WHERE id = $1
+            RETURNING *`,[id]
         );
         return result.rows[0];
     }
