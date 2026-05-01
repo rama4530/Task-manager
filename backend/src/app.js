@@ -5,7 +5,7 @@ const morgan = require('morgan');
 
 const authRoutes = require('./routes/AuthRoutes');
 const taskRoutes = require('./routes/taskRoutes');
-
+const workspaceRoutes = require('./routes/workspaceRoutes');
 
 
 const app = express();
@@ -27,6 +27,7 @@ app.get('/health', (req, res) => {
 // Routes
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/tasks', taskRoutes);
+app.use('/api/v1/workspace', workspaceRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

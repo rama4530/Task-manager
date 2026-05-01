@@ -97,6 +97,15 @@ class WorkspaceRepository {
         )
         return result.rows;
     }
+
+    async findMember(workspace_id, user_id){
+        const result = await pool.query(
+            `SELECT * FROM workspace_members
+            WHERE workspace_id =$1 AND user_id = $2
+            RETURNING *`,[workspace_id, user_id]
+        );
+        return result.rows[0] || null; 
+    }
 }
 
 module.exports = new WorkspaceRepository();
