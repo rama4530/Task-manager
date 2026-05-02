@@ -51,7 +51,7 @@ class ProjectRepository {
         return result.rows[0];
     }
 
-    async getAllProject(workspaceId){
+    async getAllProjects(workspaceId){
         const result = await pool.query(
             `SELECT name, workspace_id, owner_id 
             FROM projects

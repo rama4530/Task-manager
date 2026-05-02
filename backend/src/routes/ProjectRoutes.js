@@ -9,9 +9,9 @@ const projectController = require('../controllers/ProjectController');
 router.use(authMiddleWare);
 
 router.post('/', projectController.createProject);
-router.get('/:id',validateId('id'), projectController.findProjectById);
 router.put('/:id', validateId('id'), projectController.updateProject);
 router.delete('/:id', validateId('id'), projectController.deleteProject);
-router.get('/:workspaceId/projects/', projectController.getAllProjects);
+router.get('/workspaces/:workspaceId', projectController.getAllProjects);
+router.get('/:id',validateId('id'), projectController.findProjectById);
 
 module.exports = router;

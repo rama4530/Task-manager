@@ -21,7 +21,8 @@ class ProjectService {
         if(!project) {
             throw new AppError('Failed to find the project', 404);
         }
-        const isWorkspaceOwner = await workspaceRepository.findMember(project.workspace_id, currentUser);
+        const memberShip = await workspaceRepository.findMember(project.workspace_id, currentUser.id);
+        const isWorkspaceOwner = memberShip?.role === 'admin';
         const isOwner = project.owner_id === currentUser.id;
         const isGlobalAdmin = currentUser.role === 'admin';
 
@@ -57,12 +58,12 @@ class ProjectService {
         return projectRepository.deleteProject(id);
     }
 
-    async getAllProject(workspaceId) {
+    async getAllProjects(workspaceId) {
         const workspace = await workspaceRepository.findById(workspaceId); 
         if(!workspace) {
             throw new AppError('Failed to find the project', 404);
         }
-        return projectRepository.getAllProject(workspaceId);
+        return projectRepository.getAllProjects(workspaceId);
     }
 }
 

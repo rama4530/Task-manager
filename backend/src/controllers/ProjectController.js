@@ -1,4 +1,3 @@
-const ProjectRepository = require('../repositories/ProjectRepository');
 const projectService = require('../services/projectService');
 const AppError = require('../utils/AppError');
 
@@ -6,7 +5,7 @@ class ProjectController {
 
     async createProject(req, res, next) {
         try{
-            if(!req.body || Object.keys(req).length === 0){
+            if(!req.body || Object.keys(req.body).length === 0){
                 throw new AppError('Request body is required', 400);
             }
     
@@ -52,7 +51,7 @@ class ProjectController {
             const {id} = req.params;
             const result = await projectService.deleteProject(id, req.user);
             res.status(200).json({
-                message: 'Successfully updated the project',
+                message: 'Successfully deleted the project',
                 result: result
             });
         } catch(err) {
