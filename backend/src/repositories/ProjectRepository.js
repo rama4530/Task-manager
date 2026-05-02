@@ -61,3 +61,5 @@ class ProjectRepository {
         return result.rows;
     }
 }
+
+module.exports = new ProjectRepository();
