@@ -33,16 +33,18 @@ class ProjectRepository {
 
     async findById(id){
         const result = await pool.query(
-            `SELECT * FROM projects WHERE id=$1
-            RETURNING *`,[id]
+            `SELECT * FROM projects
+             WHERE id=$
+             AND deleted_at IS NULL`,[id]
         );
         return result.rows[0] || null;
     }
 
     async deleteProject(id){
         const result = await pool.query(
-            `DELETE FROM projects
-            WHERE id=$1
+            `UPDATE projects
+            SET deleted_at = NOW()
+            WHERE id=$1 
             AND deleted_at IS NULL
             RETURNING *`,[id]
         );
@@ -54,8 +56,7 @@ class ProjectRepository {
             `SELECT name, workspace_id, owner_id 
             FROM projects
             WHERE workspace_id = $1
-            AND deleted_at IS NULL
-            RETURNING *`, [workspaceId]
+            AND deleted_at IS NULL`, [workspaceId]
         );
     }
 }
