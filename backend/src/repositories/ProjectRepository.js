@@ -5,7 +5,7 @@ class ProjectRepository {
     async createProject(fields){
         const {name, workspace_id, owner_id} = fields;
         const result = await pool.query(
-            `INSERT INTO projects (name, workspace, owner_id)
+            `INSERT INTO projects (name, workspace_id, owner_id)
             VALUES ($1, $2, $3)
             RETURNING *`, [name, workspace_id, owner_id] 
             );
@@ -34,7 +34,7 @@ class ProjectRepository {
     async findById(id){
         const result = await pool.query(
             `SELECT * FROM projects
-             WHERE id=$
+             WHERE id=$1
              AND deleted_at IS NULL`,[id]
         );
         return result.rows[0] || null;
@@ -58,5 +58,6 @@ class ProjectRepository {
             WHERE workspace_id = $1
             AND deleted_at IS NULL`, [workspaceId]
         );
+        return result.rows;
     }
 }
