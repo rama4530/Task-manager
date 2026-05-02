@@ -63,7 +63,7 @@ class ProjectController {
     async getAllProjects(req, res, next){
         try {
             const {workspaceId} = req.params;
-            const result = await projectService.getAllProjects(workspaceId);
+            const result = await projectService.getAllProject(workspaceId);
             res.status(200).json({
                 message: 'Found all projects',
                 result : result

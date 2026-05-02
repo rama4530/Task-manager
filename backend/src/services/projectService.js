@@ -54,3 +54,5 @@ class ProjectService {
         return projectRepository.getAllProject(workspaceId);
     }
 }
+
+module.exports = new ProjectService();
