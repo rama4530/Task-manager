@@ -1,5 +1,6 @@
 const projectRepository = require('../repositories/ProjectRepository');
-const workspaceRepository = require('../repositories/WorkspaceRepository')
+const workspaceRepository = require('../repositories/WorkspaceRepository');
+const AppError = require('../utils/AppError');
 
 class ProjectService {
 
@@ -20,15 +21,25 @@ class ProjectService {
         if(!project) {
             throw new AppError('Failed to find the project', 404);
         }
+        const isWorkspaceOwner = await workspaceRepository.findMember(project.workspace_id, currentUser);
         const isOwner = project.owner_id === currentUser.id;
         const isGlobalAdmin = currentUser.role === 'admin';
-        if(!isGlobalAdmin && !isOwner) {
+
+        if(!isGlobalAdmin && !isOwner && !isWorkspaceOwner) {
             throw new AppError('You are not authorized to make changes to the project', 403);
         }
-        const {name, data } = fields;
         
-        if(Object.keys(data).length>0 && isOwner) {
+        const {name, ...rest } = fields;
+    
+        if(Object.keys(rest).length>0 && !isGlobalAdmin) {
             throw new AppError("You are not allowed to update workspace_id or project_id.", 403);
+        }
+
+        if(rest.workspace_id) {
+            const workspace = await workspaceRepository.findById(rest.workspace_id);
+            if(!workspace){
+                throw new AppError('Target workspace not found', 404);
+            }
         }
         return projectRepository.updateProject(id, fields);
     }
